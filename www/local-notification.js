@@ -93,9 +93,9 @@ exports.requestPermission = function (callback, scope) {
 /**
  * Check to see if the user has allowed "Do Not Disturb" permissions for this app.
  * This is required to use alarmVolume to take a user out of silent mode.
- * 
+ *
  * @param {Function} callback The function to be exec as the callback.
- * @param {Object} scope callback function's scope 
+ * @param {Object} scope callback function's scope
  */
 exports.hasDoNotDisturbPermissions = function (callback, scope) {
     this._exec('hasDoNotDisturbPermissions', null, callback, scope);
@@ -105,7 +105,7 @@ exports.hasDoNotDisturbPermissions = function (callback, scope) {
  * Request "Do Not Disturb" permissions for this app.
  * The only way to do this is to launch the global do not distrub settings for all apps.
  * This permission is required to use alarmVolume to take a user out of silent mode.
- * 
+ *
  * @param {Function} callback The function to be exec as the callback.
  * @param {Object} scope callback function's scope.
  */
@@ -137,6 +137,11 @@ exports.isIgnoringBatteryOptimizations = function (callback, scope) {
  * @param {Object} scope callback function's scope
  */
 exports.requestIgnoreBatteryOptimizations = function (callback, scope) {
+    if (device.platform === 'iOS') {
+        console.warn('[Notifications] requestIgnoreBatteryOptimizations not supported on iOS');
+        callback(true);
+    }
+
     this._exec('requestIgnoreBatteryOptimizations', null, callback, scope);
 }
 
