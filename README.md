@@ -99,8 +99,8 @@ A notification does have a set of configurable properties. Not all of them are s
 | id            | data          | timeoutAfter  | summary       | led           | clock         | channelName       | actions       | alarmVolume   |
 | text          | icon          | attachments   | smallIcon     | color         | defaults      | launch        | groupSummary  | resetDelay    |
 | title         | silent        | progressBar   | sticky        | vibrate       | priority      | mediaSession  | foreground    | autoLaunch    |
-| iconType
 | sound         | trigger       | group         | autoClear     | lockscreen    | number        | badge         | wakeup        | channelId     |
+| iconType      | wakeLockTimeout
 
 For their default values see:
 
