@@ -228,6 +228,26 @@ public class MatchTrigger extends IntervalTrigger {
                     addToDate(cal, now, Calendar.YEAR, 1);
                     break;
             }
+        } else
+        if (cal.get(Calendar.SECOND) < now.get(Calendar.SECOND)) {
+            switch (unit) {
+                case MINUTE:
+                    addToDate(cal, now, Calendar.MINUTE, 1);
+                    break;
+                case HOUR:
+                    addToDate(cal, now, Calendar.HOUR_OF_DAY, 1);
+                    break;
+                case DAY:
+                case WEEK:
+                    addToDate(cal, now, Calendar.DAY_OF_YEAR, 1);
+                    break;
+                case MONTH:
+                    addToDate(cal, now, Calendar.MONTH, 1);
+                    break;
+                case YEAR:
+                    addToDate(cal, now, Calendar.YEAR, 1);
+                    break;
+            }
         }
 
         return applySpecials(cal);
