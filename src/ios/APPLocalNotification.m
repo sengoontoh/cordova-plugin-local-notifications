@@ -559,12 +559,12 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
 {
     eventQueue = [[NSMutableArray alloc] init];
     _center    = [UNUserNotificationCenter currentNotificationCenter];
-    _delegate  = _center.delegate;
+    //_delegate  = _center.delegate;
 
-    _center.delegate = self;
+    // _center.delegate = self;
     [_center registerGeneralNotificationCategory];
 
-    [self monitorAppStateChanges];
+    // [self monitorAppStateChanges];
 }
 
 /**
