@@ -407,7 +407,8 @@ public final class Notification {
             } else if (obj instanceof Float) {
                 bundle.putFloat(key, (Float) obj);
             } else if (obj instanceof JSONObject) {
-                bundle.putString(key, obj.toString());
+                Bundle item = this.createBundleFromJSONObject((JSONObject) obj);
+                bundle.putBundle(key, item);
             } else if (obj instanceof JSONArray) {
                 JSONArray objArr = (JSONArray) obj;
                 ArrayList<Bundle> bundleArray = new ArrayList<Bundle>(objArr.length());
