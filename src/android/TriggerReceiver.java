@@ -78,11 +78,6 @@ public class TriggerReceiver extends AbstractTriggerReceiver {
         notification.show();
 
         if (!isUpdate && isAppRunning()) {
-            try {
-                FirebasePlugin.sendMessage(notification.toBundle(), notification.getContext());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
             fireEvent("trigger", notification);
         }
 
