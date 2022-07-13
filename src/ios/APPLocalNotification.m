@@ -27,6 +27,7 @@
 #import "APPNotificationCategory.h"
 #import "UNUserNotificationCenter+APPLocalNotification.h"
 #import "UNNotificationRequest+APPLocalNotification.h"
+#import "FirebasePlugin.h"
 
 @interface APPLocalNotification ()
 
@@ -512,15 +513,19 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
           withCompletionHandler:(void (^)(void))handler
 {
     UNNotificationRequest* toast = response.notification.request;
-
+    NSDictionary* mutableUserInfo; mutableUserInfo = [response.notification.request.content.userInfo mutableCopy];
+    
     [_delegate userNotificationCenter:center
        didReceiveNotificationResponse:response
                 withCompletionHandler:handler];
 
     handler();
 
-    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
+    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class]) {
+        [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
         return;
+    }
+        
 
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     NSString* action          = response.actionIdentifier;
@@ -545,6 +550,8 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
         [data setObject:((UNTextInputNotificationResponse*) response).userText
                  forKey:@"text"];
     }
+    
+    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
 
     [self fireEvent:event notification:toast data:data];
 }
@@ -559,12 +566,12 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
 {
     eventQueue = [[NSMutableArray alloc] init];
     _center    = [UNUserNotificationCenter currentNotificationCenter];
-    //_delegate  = _center.delegate;
+    _delegate  = _center.delegate;
 
-    // _center.delegate = self;
+     _center.delegate = self;
     [_center registerGeneralNotificationCategory];
 
-    // [self monitorAppStateChanges];
+     [self monitorAppStateChanges];
 }
 
 /**
