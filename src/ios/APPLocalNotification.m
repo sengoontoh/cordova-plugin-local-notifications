@@ -29,6 +29,16 @@
 #import "UNNotificationRequest+APPLocalNotification.h"
 #import "FirebasePlugin.h"
 
+#import <objc/runtime.h>
+#if __has_include(<Appboy_iOS_SDK/AppboyKit.h>)
+#import <Appboy_iOS_SDK/AppboyKit.h>
+#elif __has_include(<Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>)
+#import <Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>
+#else
+#import "AppboyKit.h"
+#endif
+#import "AppboyPlugin.h"
+
 @interface APPLocalNotification ()
 
 @property (strong, nonatomic) UNUserNotificationCenter* center;
@@ -518,8 +528,14 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
     [_delegate userNotificationCenter:center
        didReceiveNotificationResponse:response
                 withCompletionHandler:handler];
+    
+    if ([mutableUserInfo objectForKey:@"ab"]) {
+        [[Appboy sharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:nil];
+    }
 
     handler();
+    
+
 
     if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class]) {
         [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
