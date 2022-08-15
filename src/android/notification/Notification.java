@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.util.ArraySet;
@@ -36,6 +37,7 @@ import android.support.v4.util.Pair;
 import android.util.Log;
 import android.util.SparseArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -362,6 +364,67 @@ public final class Notification {
         }
 
         return json.toString();
+    }
+
+    /**
+     * Encode options to Bund;e.
+     */
+    public Bundle toBundle() throws JSONException {
+        JSONObject dict = options.getDict();
+        JSONObject json = new JSONObject(dict.toString());
+        return this.createBundleFromJSONObject(json);
+    }
+
+    public JSONObject toJson() {
+        JSONObject dict = options.getDict();
+        JSONObject json = new JSONObject();
+
+        try {
+            json = new JSONObject(dict.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return json;
+    }
+
+    /**
+     * Convert JSONObject to Bundle type
+     *
+     * @param params JSONObject to convert
+     */
+
+    private Bundle createBundleFromJSONObject(final JSONObject params) throws JSONException {
+        final Bundle bundle = new Bundle();
+        Iterator<String> iter = params.keys();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            Object obj = params.get(key);
+            if (obj instanceof Integer) {
+                bundle.putInt(key, (Integer) obj);
+            } else if (obj instanceof Double) {
+                bundle.putDouble(key, (Double) obj);
+            } else if (obj instanceof Float) {
+                bundle.putFloat(key, (Float) obj);
+            } else if (obj instanceof JSONObject) {
+                Bundle item = this.createBundleFromJSONObject((JSONObject) obj);
+                bundle.putBundle(key, item);
+            } else if (obj instanceof JSONArray) {
+                JSONArray objArr = (JSONArray) obj;
+                ArrayList<Bundle> bundleArray = new ArrayList<Bundle>(objArr.length());
+                for (int idx = 0; idx < objArr.length(); idx++) {
+                    Object tmp = objArr.get(idx);
+                    if (tmp instanceof JSONObject) {
+                        Bundle item = createBundleFromJSONObject(objArr.getJSONObject(idx));
+                        bundleArray.add(item);
+                    }
+                }
+                bundle.putParcelableArrayList(key, bundleArray);
+            } else {
+                bundle.putString(key, obj.toString());
+            }
+        }
+        return bundle;
     }
 
     /**

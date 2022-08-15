@@ -41,6 +41,9 @@ import static de.appplant.cordova.plugin.localnotification.LocalNotification.fir
 import static de.appplant.cordova.plugin.localnotification.LocalNotification.isAppRunning;
 import static java.util.Calendar.MINUTE;
 
+import org.apache.cordova.firebase.FirebasePlugin;
+import org.json.JSONException;
+
 /**
  * The alarm receiver is triggered when a scheduled alarm is fired. This class
  * reads the information in the intent and displays this information in the
