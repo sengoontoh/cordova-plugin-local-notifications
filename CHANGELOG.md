@@ -1,6 +1,12 @@
 ChangeLog
 ---------
 
+If the app is in background, it must not be launched but put in foreground.
+To avoid launching the app in this case, add the following in your config.xml file:
+`<preference name="AndroidLaunchMode" value="singleInstance"/>`
+
+Android 12 updates taken from: https://github.com/bhandaribhumin/cordova-plugin-local-notification-12/commit/0b6aefe0aac71cf44feb62a975516e13adfd010e
+
 Please also read the [Upgrade Guide](https://github.com/katzer/cordova-plugin-local-notifications/wiki/Upgrade-Guide) for more information.
 
 #### Version 0.8.5 (22.05.2017)
