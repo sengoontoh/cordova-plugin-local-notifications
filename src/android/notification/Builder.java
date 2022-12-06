@@ -390,6 +390,7 @@ public final class Builder {
         if (clickActivity == null)
             return;
 
+        Double reqCode = random.nextDouble();
         Action[] actions = options.getActions();
         if (actions != null && actions.length > 0 ) {
           // if actions are defined, the user must click on button actions to launch the app.
@@ -398,6 +399,7 @@ public final class Builder {
         }
 
         Intent intent = new Intent(context, clickActivity)
+                .setAction(reqCode.toString())
                 .putExtra(Notification.EXTRA_ID, options.getId())
                 .putExtra(Action.EXTRA_ID, Action.CLICK_ACTION_ID)
                 .putExtra(Options.EXTRA_LAUNCH, options.isLaunchingApp())
