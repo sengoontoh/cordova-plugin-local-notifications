@@ -24,6 +24,8 @@ package de.appplant.cordova.plugin.localnotification;
 import android.os.Bundle;
 import androidx.core.app.RemoteInput;
 
+import org.apache.cordova.firebase.FirebasePlugin;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,6 +36,9 @@ import de.appplant.cordova.plugin.notification.util.LaunchUtils;
 import static de.appplant.cordova.plugin.localnotification.LocalNotification.fireEvent;
 import static de.appplant.cordova.plugin.notification.Options.EXTRA_LAUNCH;
 import static de.appplant.cordova.plugin.notification.Request.EXTRA_LAST;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * The receiver activity is triggered when a notification is clicked by a user.
@@ -54,9 +59,14 @@ public class ClickReceiver extends AbstractClickReceiver {
         JSONObject data = new JSONObject();
 
         setTextInput(action, data);
-        launchAppIf();
 
-        fireEvent(action, notification, data);
+        try {
+            FirebasePlugin.sendMessage(notification.toBundle(), this.getApplicationContext());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        launchAppIf();
 
         if (notification.getOptions().isSticky())
             return;

@@ -27,6 +27,17 @@
 #import "APPNotificationCategory.h"
 #import "UNUserNotificationCenter+APPLocalNotification.h"
 #import "UNNotificationRequest+APPLocalNotification.h"
+#import "FirebasePlugin.h"
+
+#import <objc/runtime.h>
+#if __has_include(<Appboy_iOS_SDK/AppboyKit.h>)
+#import <Appboy_iOS_SDK/AppboyKit.h>
+#elif __has_include(<Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>)
+#import <Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>
+#else
+#import "AppboyKit.h"
+#endif
+#import "AppboyPlugin.h"
 
 @interface APPLocalNotification ()
 
@@ -525,15 +536,25 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
           withCompletionHandler:(void (^)(void))handler
 {
     UNNotificationRequest* toast = response.notification.request;
-
+    NSDictionary* mutableUserInfo; mutableUserInfo = [response.notification.request.content.userInfo mutableCopy];
+    
     [_delegate userNotificationCenter:center
        didReceiveNotificationResponse:response
                 withCompletionHandler:handler];
+    
+    if ([mutableUserInfo objectForKey:@"ab"]) {
+        [[Appboy sharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:nil];
+    }
 
     handler();
+    
 
-    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class])
+
+    if ([toast.trigger isKindOfClass:UNPushNotificationTrigger.class]) {
+        [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
         return;
+    }
+        
 
     NSMutableDictionary* data = [[NSMutableDictionary alloc] init];
     NSString* action          = response.actionIdentifier;
@@ -558,6 +579,8 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
         [data setObject:((UNTextInputNotificationResponse*) response).userText
                  forKey:@"text"];
     }
+    
+    [FirebasePlugin.firebasePlugin sendNotification:mutableUserInfo];
 
     [self fireEvent:event notification:toast data:data];
 }
@@ -574,10 +597,10 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
     _center    = [UNUserNotificationCenter currentNotificationCenter];
     _delegate  = _center.delegate;
 
-    _center.delegate = self;
+     _center.delegate = self;
     [_center registerGeneralNotificationCategory];
 
-    [self monitorAppStateChanges];
+     [self monitorAppStateChanges];
 }
 
 /**
