@@ -435,14 +435,14 @@ public final class Manager {
         } else {
             defaultChannelId = Options.SILENT_CHANNEL_ID;
             defaultChannelName = Options.SILENT_CHANNEL_NAME;
-            importance = IMPORTANCE_LOW;
+            importance = IMPORTANCE_HIGH;
             shouldVibrate = false;
         }
 
         newChannelId = channelId != null ? channelId : defaultChannelId;
 
         createChannel(newChannelId, channelName != null ? channelName : defaultChannelName, importance, shouldVibrate,
-                soundUri);
+                soundUri, hasSound);
 
         return newChannelId;
     }
@@ -452,7 +452,7 @@ public final class Manager {
      * Create a channel
      */
     public void createChannel(String channelId, CharSequence channelName, int importance, Boolean shouldVibrate,
-                              Uri soundUri) {
+                              Uri soundUri, Boolean hasSound) {
         NotificationManager mgr = getNotMgr();
 
         if (SDK_INT < O)
@@ -465,6 +465,10 @@ public final class Manager {
 
         channel = new NotificationChannel(channelId, channelName, importance);
 
+        if (!hasSound) {
+            channel.setSound(null, null);
+        }
+        
         channel.enableVibration(shouldVibrate);
 
         if (!soundUri.equals(Uri.EMPTY)) {
