@@ -43,6 +43,8 @@ import de.appplant.cordova.plugin.notification.action.Action;
 import de.appplant.cordova.plugin.notification.action.ActionGroup;
 import de.appplant.cordova.plugin.notification.util.AssetUtil;
 
+import static android.os.Build.VERSION.SDK_INT;
+import static android.os.Build.VERSION_CODES.O;
 import static android.support.v4.app.NotificationCompat.DEFAULT_LIGHTS;
 import static android.support.v4.app.NotificationCompat.DEFAULT_SOUND;
 import static android.support.v4.app.NotificationCompat.DEFAULT_VIBRATE;
@@ -57,6 +59,25 @@ import static android.support.v4.app.NotificationCompat.VISIBILITY_SECRET;
  * methods to convert independent values into platform specific values.
  */
 public final class Options {
+    // Default Channel ID for SDK < 26
+    static final String DEFAULT_CHANNEL_ID = "default-channel-id";
+
+    // Silent channel
+    static final String SILENT_CHANNEL_ID = "silent-channel-id";
+    static final CharSequence SILENT_CHANNEL_NAME = "Silent Notifications";
+
+    // Vibrate only channel
+    static final String VIBRATE_CHANNEL_ID = "vibrate-channel-id";
+    static final CharSequence VIBRATE_CHANNEL_NAME = "Low Priority Notifications";
+
+    // Sound only channel
+    static final String SOUND_CHANNEL_ID = "sound-channel-id";
+    static final CharSequence SOUND_CHANNEL_NAME = "Medium Priority Notifications";
+
+    // Sound and vibrate channel
+    static final String SOUND_VIBRATE_CHANNEL_ID = "sound-vibrate-channel-id";
+    static final CharSequence SOUND_VIBRATE_CHANNEL_NAME = "High Priority Notifications";
+
 
     // Key name for bundled sound extra
     static final String EXTRA_SOUND = "NOTIFICATION_SOUND";
@@ -215,7 +236,22 @@ public final class Options {
      * The channel id of that notification.
      */
     String getChannel() {
-        return options.optString("channel", Manager.CHANNEL_ID);
+        // If we have a low enough SDK for it not to matter,
+        // short-circuit.
+        if (SDK_INT < O) {
+            return DEFAULT_CHANNEL_ID;
+        }
+
+        Uri soundUri = getSound();
+        boolean hasSound = !isWithoutSound();
+        boolean shouldVibrate = isWithVibration();
+        CharSequence channelName = options.optString("channelName", null);
+        String channelId = options.optString("channelId", null);
+
+        channelId = Manager.getInstance(context).buildChannelWithOptions(soundUri, shouldVibrate, hasSound, channelName,
+                channelId);
+
+        return channelId;
     }
 
     /**

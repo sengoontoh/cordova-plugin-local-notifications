@@ -53,6 +53,10 @@
 
 ## Important Notice
 
+If the app is in background, it must not be launched but put in foreground.
+To avoid launching the app in this case, add the following in your config.xml file:
+`<preference name="AndroidLaunchMode" value="singleInstance"/>`
+
 Please make sure that you always read the tagged README for the version you're using.
 
 See the _0.8_ branch if you cannot upgrade. Further development for `v0.9-beta` will happen here. The `0.9-dev` and `ios10` branches are obsolate and will be removed soon.
