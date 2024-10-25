@@ -35,9 +35,9 @@
 #elif __has_include(<Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>)
 #import <Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>
 #else
-#import "AppboyKit.h"
+@import BrazeKit;
 #endif
-#import "AppboyPlugin.h"
+#import "BrazePlugin.h"
 
 @interface APPLocalNotification ()
 
@@ -530,7 +530,7 @@ UNNotificationPresentationOptions const OptionAlert = UNNotificationPresentation
                 withCompletionHandler:handler];
     
     if ([mutableUserInfo objectForKey:@"ab"]) {
-        [[Appboy sharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:nil];
+        [[Braze sharedInstance] userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:nil];
     }
 
     handler();
