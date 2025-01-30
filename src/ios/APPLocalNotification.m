@@ -30,13 +30,6 @@
 #import "FirebasePlugin.h"
 
 #import <objc/runtime.h>
-#if __has_include(<Appboy_iOS_SDK/AppboyKit.h>)
-#import <Appboy_iOS_SDK/AppboyKit.h>
-#elif __has_include(<Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>)
-#import <Appboy-iOS-SDK/Appboy_iOS_SDK.framework/Headers/AppboyKit.h>
-#else
-@import BrazeKit;
-#endif
 #import "BrazePlugin.h"
 
 @interface APPLocalNotification ()
